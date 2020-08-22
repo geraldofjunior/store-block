@@ -1,57 +1,49 @@
 import React, { useState } from 'react'
-import { TimeSplit } from './typings/global';
-import { tick } from './utils/time';
-import { useCssHandles } from "vtex.css-handles";
-import { FormattedMessage } from "react-intl";
+import { TimeSplit } from './typings/global'
+import { tick } from './utils/time'
+import { useCssHandles } from 'vtex.css-handles'
 
 interface CountdownProps {
-    title: string;
-    targetDate: string;
+    targetDate: string
 }
+  
+const DEFAULT_TARGET_DATE = (new Date('2020-03-02')).toISOString()
 
-const DEFAULT_TARGET_DATE = (new Date('2020-08-31')).toISOString();
-const CSS_HANDLES = ['container', 'countdown', 'title'];
+const CSS_HANDLES = ['countdown']
 
-const Countdown: StorefrontFunctionComponent<CountdownProps> = ({ 
-    title,
-    targetDate = DEFAULT_TARGET_DATE }) => {
+const Countdown: StorefrontFunctionComponent<CountdownProps> = ({
+    targetDate = DEFAULT_TARGET_DATE,
+}) => {
+    const [
+        timeRemaining,
+        setTime
+    ] = useState<TimeSplit>({
+        hours: '00',
+        minutes: '00',
+        seconds: '00'
+    })
 
-    const [timeRemaining, setTime] = useState<TimeSplit>({
-        hours:   '0',
-        minutes: '0',
-        seconds: '0'
-    });
+    const handles = useCssHandles(CSS_HANDLES)
 
-    const titleText = title || <FormattedMessage id="countdown.title" />;
-    const handles = useCssHandles(CSS_HANDLES);
-    
-    tick(targetDate, setTime);
+    tick(targetDate, setTime)
 
     return (
-        <div className={`${handles.container} t-heading-2 fw3 w-100 c-muted-1`}>
-            <div className={`${handles.title} db tc`}>{titleText}</div>
-            <div className={`${handles.countdown} db tc`}>
-                {`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}
-            </div>
+        <div className={`${handles.countdown} db tc`}>
+            {`${timeRemaining.hours}:${timeRemaining.minutes}:${timeRemaining.seconds}`}
         </div>
-    );
+    )
 }
 
 Countdown.schema = {
-  title: 'editor.countdown.title',
-  description: 'editor.countdown.description',
-  type: 'object',
-  properties: {
-        title: {
-            title: "Eu sou um título",
-            type: "string",
-            default: "null"
-        },
+    title: 'editor.countdown.title',
+    description: 'editor.countdown.description',
+    type: 'object',
+    properties: {
         targetDate: {
-            title: "Data Final",
-            description: "Data final utilizada pelo contador",
-            type: "string",
-            default: "null",
+        title: 'editor.countdown.targetDate.title',
+        description: 'editor.countdown.targetDate.description',
+        type: 'string',
+        default: null,
         },
     },
 }
